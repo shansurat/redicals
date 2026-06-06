@@ -136,12 +136,43 @@ export default function PeriodicalExplorer() {
     }
   }, [inView, hasMore, loading]);
 
-  function refreshList() {
-    // Re-fetch the index to get the new items
-    fetchSearchIndex().then(data => {
-      setSearchIndex(data);
-      setRefreshTrigger(prev => prev + 1);
-    }).catch(err => console.error("Failed to refresh index:", err));
+  function refreshList(savedItem?: Periodical) {
+    if (savedItem && searchIndex) {
+      // Optimistic Local Index Update (Prevents double network requests)
+      const dateStr = savedItem.publication_date ? new Date(savedItem.publication_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric', day: 'numeric' }).toLowerCase() : '';
+      const searchable = [
+        savedItem.title || '',
+        savedItem.abstract || '',
+        savedItem.journal || '',
+        dateStr,
+        ...(savedItem.authors || []),
+        ...(savedItem.tags || [])
+      ].join(' ').toLowerCase();
+      
+      const newItem = {
+        i: savedItem.id,
+        s: searchable,
+        t: (savedItem.title || '').toLowerCase(),
+        j: (savedItem.journal || '').toLowerCase(),
+        d: savedItem.publication_date ? new Date(savedItem.publication_date).getTime() : 0
+      };
+
+      setSearchIndex(prev => {
+        if (!prev) return prev;
+        const copy = [...prev];
+        const idx = copy.findIndex(p => p.i === savedItem.id);
+        if (idx >= 0) copy[idx] = newItem;
+        else copy.unshift(newItem);
+        return copy;
+      });
+      setPage(0);
+    } else {
+      // Fallback
+      fetchSearchIndex().then(data => {
+        setSearchIndex(data);
+        setPage(0);
+      }).catch(err => console.error("Failed to refresh index:", err));
+    }
   }
 
   async function handleDelete(id: string) {
@@ -264,7 +295,7 @@ export default function PeriodicalExplorer() {
         <PeriodicalModal 
           periodical={editingPeriodical} 
           onClose={() => setIsModalOpen(false)} 
-          onSaved={refreshList} 
+          onSaved={(savedItem) => refreshList(savedItem)} 
         />
       )}
     </div>
@@ -354,7 +385,7 @@ function PeriodicalCard({ periodical, onEdit, onDelete }: { periodical: Periodic
   );
 }
 
-function PeriodicalModal({ periodical, onClose, onSaved }: { periodical: Periodical | null, onClose: () => void, onSaved: () => void }) {
+function PeriodicalModal({ periodical, onClose, onSaved }: { periodical: Periodical | null, onClose: () => void, onSaved: (item: Periodical) => void }) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   
@@ -385,8 +416,8 @@ function PeriodicalModal({ periodical, onClose, onSaved }: { periodical: Periodi
     };
 
     try {
-      await savePeriodicalServer(payload);
-      onSaved();
+      const savedData = await savePeriodicalServer(payload);
+      onSaved(savedData);
       onClose();
     } catch (err: any) {
       setErrorMsg(err.message || 'An unexpected error occurred');

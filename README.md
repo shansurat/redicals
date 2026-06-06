@@ -10,9 +10,11 @@ This is a project I made for **LIS 198: Data Structures for LIS** by Shan Surat.
 
 Because it's just a class project, I skipped adding complex stuff like user login or authentication. The main focus is just on using Redis to make the search speed super fast! Also, if you notice any rough edges or glitches with the UI, please excuse them—my primary focus for this assignment was entirely on the backend functionality and pushing the search speed to the limit.
 
-## Screenshots
+## Screenshots & Demo
 
 <div align="center">
+  <video src="/public/Demo.mov" controls="controls" width="100%" style="margin-bottom: 20px; border-radius: 8px;"></video>
+  
   <img src="/public/Home.png" alt="Home Screen" width="45%" style="margin: 5px;" />
   <img src="/public/Result.png" alt="Search Results" width="45%" style="margin: 5px;" />
   <img src="/public/Add.png" alt="Add Periodical" width="45%" style="margin: 5px;" />
