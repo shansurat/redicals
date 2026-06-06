@@ -6,7 +6,7 @@ A fast academic journal index I made for class. It's designed to search through 
 
 This is a project I made for **LIS 198: Data Structures for LIS** by Shan Surat. It's basically a test assignment to show how we can make websites search really fast using Redis.
 
-Because it's just a class project, I skipped adding complex stuff like user login or authentication. The main focus is just on using Redis to make the search speed super fast!
+Because it's just a class project, I skipped adding complex stuff like user login or authentication. The main focus is just on using Redis to make the search speed super fast! Also, if you notice any rough edges or glitches with the UI, please excuse them—my primary focus for this assignment was entirely on the backend functionality and pushing the search speed to the limit.
 
 ## Screenshots
 
