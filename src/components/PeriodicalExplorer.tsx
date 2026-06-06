@@ -19,6 +19,7 @@ export default function PeriodicalExplorer() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [searchTime, setSearchTime] = useState<number | null>(null);
@@ -54,7 +55,7 @@ export default function PeriodicalExplorer() {
     setHasMore(true);
     setTotalCount(null);
     setSearchTime(null);
-  }, [debouncedQuery, sortBy, sortOrder]);
+  }, [debouncedQuery, sortBy, sortOrder, refreshTrigger]);
 
   // Fetch data
   useEffect(() => {
@@ -126,7 +127,7 @@ export default function PeriodicalExplorer() {
     }
     
     loadPeriodicals();
-  }, [page, debouncedQuery, sortBy, sortOrder, searchIndex]);
+  }, [page, debouncedQuery, sortBy, sortOrder, searchIndex, refreshTrigger]);
 
   // Handle infinite scroll trigger
   useEffect(() => {
@@ -136,12 +137,11 @@ export default function PeriodicalExplorer() {
   }, [inView, hasMore, loading]);
 
   function refreshList() {
-    if (page === 0) {
-      setPage(0);
-      setPeriodicals([]);
-    } else {
-      setPage(0); 
-    }
+    // Re-fetch the index to get the new items
+    fetchSearchIndex().then(data => {
+      setSearchIndex(data);
+      setRefreshTrigger(prev => prev + 1);
+    }).catch(err => console.error("Failed to refresh index:", err));
   }
 
   async function handleDelete(id: string) {
