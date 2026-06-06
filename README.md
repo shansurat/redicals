@@ -2,7 +2,7 @@
 
 A fast academic journal index I made for class. It's designed to search through thousands of articles instantly.
 
-**[🌐 View Live Demo](https://redicals.vercel.app)**
+**[Live Demo](https://redicals.vercel.app)**
 
 ## What is this?
 
