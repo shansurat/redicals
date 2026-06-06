@@ -2,6 +2,8 @@
 
 A fast academic journal index I made for class. It's designed to search through thousands of articles instantly.
 
+**[🌐 View Live Demo](https://redicals.vercel.app)**
+
 ## What is this?
 
 This is a project I made for **LIS 198: Data Structures for LIS** by Shan Surat. It's basically a test assignment to show how we can make websites search really fast using Redis.
