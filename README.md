@@ -1,10 +1,12 @@
 # Redicals
 
-A high-performance index of academic journals and articles built for speed. Redicals is designed to instantly filter through thousands of periodicals without any network bottleneck.
+A fast academic journal index I made for class. It's designed to search through thousands of articles instantly.
 
-## Purpose
+## What is this?
 
-This project was developed by Shan Surat in fulfillment of the requirements for **LIS 198: Data Structures**. Its primary goal is to demonstrate advanced data structures, caching mechanisms, and extreme performance optimization in a modern web application environment.
+This is a project I made for **LIS 198: Data Structures for LIS** by Shan Surat. It's basically a test assignment to show how we can make websites search really fast using Redis.
+
+Because it's just a class project, I skipped adding complex stuff like user login or authentication. The main focus is just on using Redis to make the search speed super fast!
 
 ## Screenshots
 
@@ -15,31 +17,31 @@ This project was developed by Shan Surat in fulfillment of the requirements for 
   <img src="/public/Edit.png" alt="Edit Periodical" width="45%" style="margin: 5px;" />
 </div>
 
-## Technologies Used
+## Tools I Used
 
-- **Framework**: Next.js (React)
+- **Frontend**: Next.js (React)
 - **Styling**: Tailwind CSS
-- **Primary Database**: Supabase (PostgreSQL)
-- **Search Engine & Cache**: Upstash Redis
+- **Database**: Supabase (PostgreSQL)
+- **Search & Cache**: Upstash Redis
 - **Icons**: Lucide React
 
-## Setup Instructions
+## How to run it
 
-Follow these steps to run the application locally:
+If you want to run this on your own computer:
 
-1. Clone the repository:
+1. Clone the repo:
    ```bash
-   git clone <your-repository-url>
+   git clone https://github.com/shansurat/redicals
    cd redicals
    ```
 
-2. Install the required dependencies:
+2. Install everything:
    ```bash
    npm install
    ```
 
-3. Configure Environment Variables:
-   Create a `.env.local` file in the root directory. You will need to provision projects in Supabase and Upstash Redis, then add your connection keys:
+3. Setup your keys:
+   Make a `.env.local` file in the main folder. You'll need your own Supabase and Upstash Redis accounts for this:
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
@@ -47,25 +49,18 @@ Follow these steps to run the application locally:
    UPSTASH_REDIS_REST_TOKEN=your_upstash_token
    ```
 
-4. Run the development server:
+4. Start it up:
    ```bash
    npm run dev
    ```
+   Then just open `http://localhost:3000` in your browser.
 
-5. Open your browser and navigate to `http://localhost:3000` to view the application.
+## How I made the search so fast
 
-## Architecture & Performance
+Instead of having the main database search through everything slowly every time you type, I used **Redis**.
 
-While Supabase acts as the primary persistent database for storing records, the search functionality is completely decoupled. It is powered entirely by Redis to achieve sub-50ms query times across over 10,000 records.
+1. **Squashing the data**: The server grabs all the important text (like titles, authors, and abstracts) and squashes it into a really small, simple list saved in Redis.
+2. **Local searching**: When you open the site, your browser downloads that tiny list once. So when you start typing in the search bar, your computer just filters its own memory. It doesn't even talk to the server while you type, which makes it feel instant!
+3. **Getting the details**: Once your browser figures out the exact 20 articles you need, it asks Redis to fetch just those specific ones so they can show up on your screen.
 
-### How the Search Was Made Fast
-
-Traditional SQL databases perform full-text searches using disk-based queries, which can become slow as datasets grow. By utilizing Redis as an in-memory data store, we bypass disk read latency entirely.
-
-To push the search speed to its absolute limit, Redicals implements a custom **Lightweight Client-Side Search Index** pattern:
-
-1. **Compression**: The server extracts and squashes all searchable text (titles, abstracts, authors) into a highly compressed JSON array stored in a single Redis key.
-2. **Zero-Latency Filtering**: On initial page load, the client downloads this tiny index from Redis exactly once. When a user types a query, the application filters the index directly in local memory in under 5 milliseconds.
-3. **Precise Hydration**: Once the local filter identifies the exact 20 IDs needed for the current page, the server uses the Redis `HMGET` command to instantly fetch only those specific full objects.
-
-By keeping the heavy JSON payloads in Redis and offloading the filtering to the client, Redicals avoids downloading megabytes of data on every keystroke, resulting in a completely instantaneous search experience.
+By doing this, we avoid downloading huge chunks of data over the internet every time you type a letter, making the whole thing super snappy.
