@@ -13,7 +13,7 @@ Because it's just a class project, I skipped adding complex stuff like user logi
 ## Screenshots & Demo
 
 <div align="center">
-  <video src="/public/Demo.mov" controls="controls" width="100%" style="margin-bottom: 20px; border-radius: 8px;"></video>
+  <video src="Demo.mov" controls="controls" width="100%" style="margin-bottom: 20px; border-radius: 8px;"></video>
   
   <img src="/public/Home.png" alt="Home Screen" width="45%" style="margin: 5px;" />
   <img src="/public/Result.png" alt="Search Results" width="45%" style="margin: 5px;" />
